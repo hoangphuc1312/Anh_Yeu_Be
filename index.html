@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mã QR Trái Tim & Vũ Trụ Tình Yêu</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #0c0408;
+            color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* MÀN HÌNH 1: QR TRÁI TIM */
+        #screen-qr {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 100;
+            background: radial-gradient(circle at center, #250914 0%, #0c0408 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 1s ease, visibility 1s;
+        }
+
+        .qr-header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .qr-header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .qr-header h1 span {
+            color: #ff4d79;
+        }
+
+        .qr-header p {
+            color: #d19cae;
+            font-size: 1rem;
+            margin-top: 6px;
+            font-style: italic;
+        }
+
+        .qr-card {
+            background: #180910;
+            border: 1px solid #331422;
+            border-radius: 24px;
+            padding: 35px 40px;
+            display: flex;
+            gap: 40px;
+            align-items: center;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), 0 0 30px rgba(255, 77, 121, 0.15);
+            max-width: 850px;
+            width: 90%;
+        }
+
+        .heart-qr-frame {
+            position: relative;
+            width: 220px;
+            height: 220px;
+            background: #ffffff;
+            clip-path: path('M 110 200 C 110 200 10 135 10 70 C 10 25 45 10 75 10 C 95 10 105 20 110 30 C 115 20 125 10 145 10 C 175 10 210 25 210 70 C 210 135 110 200 110 200 Z');
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 25px;
+        }
+
+        #qrcode {
+            width: 130px;
+            height: 130px;
+            margin-top: -15px;
+        }
+
+        #qrcode img {
+            width: 100%;
+            height: 100%;
+        }
+
+        .form-controls {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .input-group label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            color: #e0a3b5;
+            font-weight: 600;
+        }
+
+        .input-group input {
+            background: #260d1b;
+            border: 1px solid #45182e;
+            border-radius: 12px;
+            padding: 12px 16px;
+            color: #ffffff;
+            font-size: 0.95rem;
+            outline: none;
+        }
+
+        .btn-enter {
+            background: linear-gradient(135deg, #ff4d79, #ff2a5f);
+            color: #ffffff;
+            border: none;
+            border-radius: 14px;
+            padding: 14px 28px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(255, 77, 121, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .btn-enter:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 28px rgba(255, 77, 121, 0.6);
+        }
+
+        .hint-box {
+            background: #210a17;
+            border-left: 3px solid #ff4d79;
+            padding: 10px 14px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            color: #c98ea0;
+        }
+
+        /* MÀN HÌNH 2: VŨ TRỤ */
+        #screen-universe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            background: #050205;
+            display: none;
+            opacity: 0;
+            transition: opacity 1.5s ease;
+        }
+
+        #canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+        }
+
+        .heart-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 20;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            pointer-events: none;
+        }
+
+        .heart {
+            position: relative;
+            width: 140px;
+            height: 140px;
+            background-color: #ff4d79;
+            transform: rotate(-45deg);
+            box-shadow: 0 0 30px #ff1493, 0 0 60px #ff69b4;
+            animation: pulse 1.2s infinite alternate ease-in-out;
+        }
+
+        .heart::before,
+        .heart::after {
+            content: "";
+            position: absolute;
+            width: 140px;
+            height: 140px;
+            background-color: #ff4d79;
+            border-radius: 50%;
+            box-shadow: 0 0 30px #ff1493;
+        }
+
+        .heart::before { top: -70px; left: 0; }
+        .heart::after { left: 70px; top: 0; }
+
+        @keyframes pulse {
+            0% { transform: rotate(-45deg) scale(0.95); }
+            100% { transform: rotate(-45deg) scale(1.1); }
+        }
+
+        .photo-wrapper {
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(45deg);
+            z-index: 25;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 3px solid #fff;
+        }
+
+        .photo-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: opacity 0.8s ease-in-out;
+        }
+
+        .floating-text {
+            position: absolute;
+            color: #ff9ebb;
+            font-weight: 700;
+            white-space: nowrap;
+            user-select: none;
+            pointer-events: none;
+            z-index: 10;
+            text-shadow: 0 0 12px #ff1493, 0 0 25px #ff69b4;
+            animation: pulseText 2s infinite alternate ease-in-out;
+        }
+
+        @keyframes pulseText {
+            0% { font-size: 14px; opacity: 0.3; }
+            50% { font-size: 28px; opacity: 1; }
+            100% { font-size: 18px; opacity: 0.6; }
+        }
+
+        /* ẨN PLAYER YOUTUBE KHỎI MÀN HÌNH MÀ VẪN PHÁT TIẾNG */
+        #youtube-player {
+            position: absolute;
+            top: -9999px;
+            left: -9999px;
+            width: 1px;
+            height: 1px;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .audio-btn {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            z-index: 100;
+            background: rgba(255, 77, 121, 0.7);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            padding: 12px 22px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            backdrop-filter: blur(8px);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- MÀN HÌNH 1 -->
+    <div id="screen-qr">
+        <div class="qr-header">
+            <h1>Mã QR <span>Trái Tim</span></h1>
+            <p>Trao yêu thương qua từng nhịp chạm</p>
+        </div>
+
+        <div class="qr-card">
+            <div class="qr-display-box">
+                <div class="heart-qr-frame">
+                    <div id="qrcode"></div>
+                </div>
+            </div>
+
+            <div class="form-controls">
+                <div class="input-group">
+                    <label>NHẬP MÃ KEY HOẶC QUÉT QR ĐỂ MỞ</label>
+                    <input type="text" id="keyInput" value="LOVE2026" placeholder="Nhập mã key...">
+                </div>
+
+                <button class="btn-enter" onclick="unlockUniverse()">
+                    💖 Khám Phá Vũ Trụ Tình Yêu
+                </button>
+
+                <div class="hint-box">
+                    💡 Nhấn nút "Khám Phá Vũ Trụ Tình Yêu" để vào giao diện và bật nhạc ngay!
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MÀN HÌNH 2 -->
+    <div id="screen-universe">
+        <canvas id="canvas"></canvas>
+
+        <div class="heart-container">
+            <div class="heart"></div>
+            <div class="photo-wrapper">
+                <img id="slideshow" src="https://images.unsplash.com/photo-1518199266791-5375a83190b7?q=80&w=600&auto=format&fit=crop" alt="Love Photo">
+            </div>
+        </div>
+
+        <!-- YOUTUBE IFRAME EMBEDDED -->
+        <div id="youtube-player"></div>
+
+        <button class="audio-btn" id="playBtn" onclick="toggleYouTubeAudio()">🔊 Tắt / Bật Nhạc</button>
+    </div>
+
+    <!-- YOUTUBE Iframe API Script -->
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <script>
+        const SECRET_KEY = "ANHYEUEM";
+        let player;
+        let isPlayerReady = false;
+
+        // Tự động load player YouTube với Video ID của "Nơi Này Có Anh"
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('youtube-player', {
+                height: '1',
+                width: '1',
+                videoId: 'FN7ALfpGxiI', // ID video Nơi Này Có Anh (Sơn Tùng M-TP)
+                playerVars: {
+                    'autoplay': 0,
+                    'controls': 0,
+                    'loop': 1,
+                    'playlist': 'FN7ALfpGxiI'
+                },
+                events: {
+                    'onReady': () => { isPlayerReady = true; }
+                }
+            });
+        }
+
+        window.addEventListener('load', () => {
+            new QRCode(document.getElementById('qrcode'), {
+                text: SECRET_KEY,
+                width: 130,
+                height: 130,
+                colorDark: "#ff3e60",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
+            });
+        });
+
+        function unlockUniverse() {
+            const inputVal = document.getElementById('keyInput').value.trim();
+            if (inputVal === "" || inputVal.toUpperCase() !== SECRET_KEY) {
+                alert("Mã Key không đúng! Hãy nhập: " + Hỏi Phúc);
+                return;
+            }
+
+            // Phát nhạc từ YouTube khi người dùng bấm nút
+            if (player && isPlayerReady) {
+                player.playVideo();
+            }
+
+            const screenQR = document.getElementById('screen-qr');
+            const screenUniverse = document.getElementById('screen-universe');
+
+            screenQR.style.opacity = '0';
+            setTimeout(() => {
+                screenQR.style.display = 'none';
+                screenUniverse.style.display = 'block';
+                setTimeout(() => {
+                    screenUniverse.style.opacity = '1';
+                    initUniverse();
+                }, 50);
+            }, 1000);
+        }
+
+        function toggleYouTubeAudio() {
+            if (!player || !isPlayerReady) return;
+            const state = player.getPlayerState();
+            const btn = document.getElementById('playBtn');
+            if (state === YT.PlayerState.PLAYING) {
+                player.pauseVideo();
+                btn.innerText = "🔇 Đã Tắt Nhạc";
+            } else {
+                player.playVideo();
+                btn.innerText = "🔊 Tắt / Bật Nhạc";
+            }
+        }
+
+        let isUniverseInit = false;
+        function initUniverse() {
+            if (isUniverseInit) return;
+            isUniverseInit = true;
+
+            const canvas = document.getElementById('canvas');
+            const ctx = canvas.getContext('2d');
+            let width = canvas.width = window.innerWidth;
+            let height = canvas.height = window.innerHeight;
+
+            window.addEventListener('resize', () => {
+                width = canvas.width = window.innerWidth;
+                height = canvas.height = window.innerHeight;
+            });
+
+            const stars = [];
+            for (let i = 0; i < 250; i++) {
+                stars.push({
+                    x: Math.random() * width,
+                    y: Math.random() * height,
+                    radius: Math.random() * 1.8,
+                    alpha: Math.random(),
+                    speed: Math.random() * 0.02 + 0.005
+                });
+            }
+
+            function drawStars() {
+                ctx.clearRect(0, 0, width, height);
+                stars.forEach(star => {
+                    ctx.beginPath();
+                    ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(255, 255, 255, ${star.alpha})`;
+                    ctx.fill();
+
+                    star.alpha += star.speed;
+                    if (star.alpha > 1 || star.alpha < 0) {
+                        star.speed = -star.speed;
+                    }
+                });
+                requestAnimationFrame(drawStars);
+            }
+            drawStars();
+
+            const texts = [
+                "I LOVE YOU", "LUÔN LUÔN BÊN NHAU", "ANH YÊU EM NHIỀU LẮM", 
+                "YÊU EM NHIỀU", "LOVE U SO MUCH", "HOANGPHUCYEUEM", "I LOVE YOU ❤️"
+            ];
+
+            const screenUni = document.getElementById('screen-universe');
+            for (let i = 0; i < 50; i++) {
+                const span = document.createElement('span');
+                span.className = 'floating-text';
+                span.innerText = texts[Math.floor(Math.random() * texts.length)];
+                span.style.top = (Math.random() * 88 + 5) + 'vh';
+                span.style.left = (Math.random() * 88 + 5) + 'vw';
+                const animDuration = (Math.random() * 2 + 1.5).toFixed(2);
+                const animDelay = (Math.random() * 3).toFixed(2);
+                span.style.animation = `pulseText ${animDuration}s infinite alternate ease-in-out ${animDelay}s`;
+                screenUni.appendChild(span);
+            }
+
+            const imageLinks = [
+                "https://files.catbox.moe/awoupg.png",
+                "https://files.catbox.moe/18rm8v.png",
+            ];
+
+            let currentImgIndex = 0;
+            const imgElement = document.getElementById('slideshow');
+
+            setInterval(() => {
+                currentImgIndex = (currentImgIndex + 1) % imageLinks.length;
+                imgElement.style.opacity = '0';
+                setTimeout(() => {
+                    imgElement.src = imageLinks[currentImgIndex];
+                    imgElement.style.opacity = '1';
+                }, 400);
+            }, 3000);
+        }
+    </script>
+</body>
+  </html>
+
