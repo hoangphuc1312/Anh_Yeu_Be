@@ -302,7 +302,7 @@
             <div class="form-controls">
                 <div class="input-group">
                     <label>NHẬP MÃ KEY HOẶC QUÉT QR ĐỂ MỞ</label>
-                    <input type="text" id="keyInput" value="ANHYEUEM" placeholder="Nhập mã key...">
+                    <input type="text" id="keyInput" value="HOANGPHUC" placeholder="Nhập mã key...">
                 </div>
 
                 <button class="btn-enter" onclick="unlockUniverse()">
@@ -372,7 +372,7 @@
         function unlockUniverse() {
             const inputVal = document.getElementById('keyInput').value.trim();
             if (inputVal === "" || inputVal.toUpperCase() !== SECRET_KEY) {
-                alert("Mã Key không đúng! Hãy nhập: " + SECRET_KEY);
+                alert("Mã Key không đúng! Hãy nhập: " + hỏi phúc);
                 return;
             }
 
